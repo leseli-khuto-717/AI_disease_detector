@@ -1,0 +1,1 @@
+# AI_disease_detector
