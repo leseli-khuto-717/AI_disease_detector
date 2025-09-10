@@ -1,8 +1,8 @@
-fastapi 
-uvicorn 
-tensorflow 
-pillow 
-numpy 
-python-dotenv 
-supabase 
-python-multipart
+fastapi
+uvicorn
+supabase
+python-dotenv
+tensorflow
+Pillow
+numpy
+
