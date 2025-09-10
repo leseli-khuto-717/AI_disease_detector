@@ -64,7 +64,7 @@ async def predict_crop(file: UploadFile = File(...)):
 
     try:
            # 2️⃣ Read and preprocess image
-        img = Image.open(file.file).convert("RGB").resize((224, 224))
+        img = Image.open(file.file).convert("RGB").resize((128, 128))
         img_array = np.array(img, dtype=np.float32) / 255.0
         img_array = np.expand_dims(img_array, axis=0)  # shape (1, 224, 224, 3)
     except UnidentifiedImageError:
