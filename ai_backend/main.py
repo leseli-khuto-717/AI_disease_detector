@@ -63,9 +63,10 @@ async def predict_crop(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Only jpg, jpeg, png allowed.")
 
     try:
-        # 2️⃣ Read and preprocess image
-        img = Image.open(file.file).convert("RGB").resize((224, 224))
-        img_array = np.expand_dims(np.array(img)/255.0, axis=0)
+       # 2️⃣ Read and preprocess image
+    img = Image.open(file.file).convert("RGB").resize((224, 224))
+    img_array = np.array(img, dtype=np.float32) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)  # shape (1, 224, 224, 3)
     except UnidentifiedImageError:
         raise HTTPException(status_code=400, detail="Cannot read image file.")
     except Exception as e:
