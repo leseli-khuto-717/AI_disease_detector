@@ -85,11 +85,13 @@ async def predict_crop(file: UploadFile = File(...)):
     try:
         # 4️⃣ Upload image to Supabase Storage
         file.file.seek(0)  # reset file pointer
+        file_bytes = file.file.read()  # ✅ convert to bytes
         storage_path = f"{file.filename}"
-        supabase.storage.from_("crop-images").upload(storage_path, file.file, {"upsert": "true"})
+        supabase.storage.from_("crop-images").upload(storage_path, file_bytes, {"upsert": "true"})
         image_url = supabase.storage.from_("crop-images").get_public_url(storage_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading image: {str(e)}")
+
 
     try:
         # 5️⃣ Insert prediction into Supabase Database
