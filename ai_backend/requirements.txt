@@ -5,4 +5,5 @@ python-dotenv
 tensorflow
 Pillow
 numpy
+python-multipart
 

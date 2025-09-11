@@ -63,9 +63,10 @@ async def predict_crop(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Only jpg, jpeg, png allowed.")
 
     try:
-        # 2️⃣ Read and preprocess image
-        img = Image.open(file.file).convert("RGB").resize((224, 224))
-        img_array = np.expand_dims(np.array(img)/255.0, axis=0)
+           # 2️⃣ Read and preprocess image
+        img = Image.open(file.file).convert("RGB").resize((128, 128))
+        img_array = np.array(img, dtype=np.float32) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)  # shape (1, 224, 224, 3)
     except UnidentifiedImageError:
         raise HTTPException(status_code=400, detail="Cannot read image file.")
     except Exception as e:
@@ -84,15 +85,17 @@ async def predict_crop(file: UploadFile = File(...)):
     try:
         # 4️⃣ Upload image to Supabase Storage
         file.file.seek(0)  # reset file pointer
+        file_bytes = file.file.read()  # ✅ convert to bytes
         storage_path = f"{file.filename}"
-        supabase.storage.from_("crop-images").upload(storage_path, file.file, {"upsert": "true"})
+        supabase.storage.from_("crop-images").upload(storage_path, file_bytes, {"upsert": "true"})
         image_url = supabase.storage.from_("crop-images").get_public_url(storage_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading image: {str(e)}")
 
+
     try:
         # 5️⃣ Insert prediction into Supabase Database
-        supabase.table("crop_diagnosis").insert({
+        supabase.table("backend").insert({
             "image_url": image_url,
             "crop_name": file.filename.split('_')[0],  # simple heuristic
             "disease_name": predicted_disease,
