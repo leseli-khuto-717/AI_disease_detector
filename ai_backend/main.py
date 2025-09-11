@@ -95,7 +95,7 @@ async def predict_crop(file: UploadFile = File(...)):
 
     try:
         # 5️⃣ Insert prediction into Supabase Database
-        supabase.table("crop_diagnosis").insert({
+        supabase.table("backend").insert({
             "image_url": image_url,
             "crop_name": file.filename.split('_')[0],  # simple heuristic
             "disease_name": predicted_disease,
