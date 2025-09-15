@@ -1,51 +1,116 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../app/lib/supabaseClient";
+import { useState, DragEvent } from "react";
+
+interface Prediction {
+  disease: string;
+  severity: string;
+  treatment: string;
+  image_url: string;
+}
 
 interface Props {
-  onUpload: (url: string) => void;
+  onUpload: (prediction: Prediction) => void;
 }
 
 export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
   const [loading, setLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleUploadFile = async (file: File) => {
     setLoading(true);
-    const fileName = `${Date.now()}_${file.name}`;
 
-    // Upload to "crop-images" bucket (public)
-    const { error } = await supabase.storage.from("crop-images").upload(fileName, file);
-    if (error) {
-      console.error(error.message);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/predict`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Prediction failed");
+
+      const result: Prediction = await response.json();
+      setPrediction(result);
+      onUpload(result); // send prediction to parent component
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading image or getting prediction.");
+    } finally {
       setLoading(false);
-      return;
     }
+  };
 
-    // Get public URL from same bucket
-    const { data } = supabase.storage.from("crop-images").getPublicUrl(fileName);
-    const publicUrl = data.publicUrl;
+  // File input
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleUploadFile(file);
+  };
 
-    // Set preview and notify parent
-    setPreviewUrl(publicUrl);
-    setLoading(false);
-    onUpload(publicUrl);
+  // Drag events
+  const handleDrag = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    if (e.type === "dragleave") setDragActive(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleUploadFile(file);
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <input type="file" accept="image/*" onChange={handleUpload} />
-      {loading && <p>Uploading image...</p>}
+    <div className="flex flex-col items-center gap-4 w-full max-w-md mx-auto">
+      {/* Drag & drop area */}
+      <div
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
+        onDrop={handleDrop}
+        className={`w-full h-40 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer transition-colors ${
+          dragActive ? "border-green-600 bg-green-100" : "border-gray-300 bg-white"
+        }`}
+      >
+        <p className="text-center text-gray-700">
+          {dragActive
+            ? "Drop the image here..."
+            : "Drag & drop an image or click to upload"}
+        </p>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleChange}
+          className="absolute w-full h-full opacity-0 cursor-pointer"
+        />
+      </div>
 
-      {/* Show uploaded image preview */}
-      {previewUrl && (
-        <div className="mt-2">
-          <p className="text-sm">Preview:</p>
-          <img src={previewUrl} alt="Uploaded" className="h-40 w-auto rounded shadow-md" />
+      {loading && <p className="text-green-700 font-medium">Uploading & predicting...</p>}
+
+      {/* Display prediction */}
+      {prediction && (
+        <div className="w-full bg-green-50 border border-green-200 rounded-md p-4 shadow-sm flex flex-col items-center gap-2">
+          <img
+            src={prediction.image_url}
+            alt="Uploaded"
+            className="h-40 w-auto rounded shadow-md"
+          />
+          <div className="text-center">
+            <p>
+              <span className="font-semibold">Disease:</span> {prediction.disease}
+            </p>
+            <p>
+              <span className="font-semibold">Severity:</span> {prediction.severity}
+            </p>
+            <p>
+              <span className="font-semibold">Treatment:</span> {prediction.treatment}
+            </p>
+          </div>
         </div>
       )}
     </div>
