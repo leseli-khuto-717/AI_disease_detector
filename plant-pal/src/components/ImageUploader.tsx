@@ -35,7 +35,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
 
       const result: Prediction = await response.json();
       setPrediction(result);
-      onUpload(result); // ✅ pass full prediction object to parent
+      onUpload(result);
     } catch (err) {
       console.error(err);
       alert("Error uploading image or getting prediction.");
@@ -97,9 +97,12 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
       {prediction && (
         <div className="w-full bg-green-50 border border-green-200 rounded-md p-4 shadow-sm flex flex-col items-center gap-2">
           <Image
-            src={prediction.image_url}
+            src={encodeURI(prediction.image_url)} // ✅ encode URL for safety
             alt="Uploaded"
-            className="h-40 w-auto rounded shadow-md"
+            width={320}  // recommended width for display
+            height={240} // recommended height for display
+            style={{ width: "100%", height: "auto" }} // responsive
+            className="rounded shadow-md"
           />
           <div className="text-center">
             <p>
