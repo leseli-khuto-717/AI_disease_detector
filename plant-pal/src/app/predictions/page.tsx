@@ -1,11 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { fetchPredictions, supabaseDeletePrediction } from "../lib/api";
 import { PredictionCard } from "../../components/PredictionCard";
 
+interface Prediction {
+  id: string;
+  image_url: string;
+  disease: string;
+  severity: string;
+  treatment: string;
+}
+
 export default function SavedPredictions() {
-  const [predictions, setPredictions] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [filtered, setFiltered] = useState<Prediction[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -28,7 +37,11 @@ export default function SavedPredictions() {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
     setSearch(term);
-    setFiltered(predictions.filter((p) => p.disease.toLowerCase().includes(term)));
+    setFiltered(
+      predictions.filter((p) =>
+        p.disease.toLowerCase().includes(term)
+      )
+    );
   };
 
   return (
@@ -43,9 +56,11 @@ export default function SavedPredictions() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
         {filtered.map((p) => (
           <div key={p.id} className="flex flex-col items-center gap-2">
-            <img
+            <Image
               src={p.image_url}
               alt={p.disease}
+              width={300}
+              height={192}
               className="w-full h-48 object-cover rounded-xl shadow-md"
             />
             <PredictionCard

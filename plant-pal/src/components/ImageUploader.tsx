@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, DragEvent } from "react";
+import Image from "next/image";
 
 interface Prediction {
   disease: string;
@@ -25,7 +26,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/predict`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/predict/`, {
         method: "POST",
         body: formData,
       });
@@ -34,7 +35,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
 
       const result: Prediction = await response.json();
       setPrediction(result);
-      onUpload(result); // send prediction to parent component
+      onUpload(result); // ✅ pass full prediction object to parent
     } catch (err) {
       console.error(err);
       alert("Error uploading image or getting prediction.");
@@ -95,7 +96,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
       {/* Display prediction */}
       {prediction && (
         <div className="w-full bg-green-50 border border-green-200 rounded-md p-4 shadow-sm flex flex-col items-center gap-2">
-          <img
+          <Image
             src={prediction.image_url}
             alt="Uploaded"
             className="h-40 w-auto rounded shadow-md"

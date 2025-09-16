@@ -1,14 +1,20 @@
 "use client";
 import { useState } from "react";
 import { ImageUploader } from "../components/ImageUploader";
-import { getPrediction } from "./lib/api";
 import { PredictionCard } from "../components/PredictionCard";
 
-export default function Home() {
-  const [prediction, setPrediction] = useState<any>(null);
+interface Prediction {
+  disease: string;
+  severity: string;
+  treatment: string;
+  image_url: string;
+}
 
-  const handleUpload = async (imageUrl: string) => {
-    const result = await getPrediction(imageUrl);
+export default function Home() {
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
+
+  // ✅ This now receives the full prediction object directly
+  const handleUpload = (result: Prediction) => {
     setPrediction(result);
   };
 
