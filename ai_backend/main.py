@@ -55,7 +55,7 @@ app = FastAPI(title="Crop Disease Detection API")
 # ✅ Enable CORS for your frontend(s)
 origins = [
     "https://reimagined-palm-tree-pj7p7jwg4jjwhrvpr-3000.app.github.dev/",       # Local frontend
-    #"https://your-frontend-domain.com"  # Deployed frontend
+    "https://ai-disease-detector.vercel.app/"  # Deployed frontend
 ]
 
 app.add_middleware(
