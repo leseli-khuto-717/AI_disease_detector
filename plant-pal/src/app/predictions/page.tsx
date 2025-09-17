@@ -37,13 +37,18 @@ export default function PredictionsPage() {
   }, []);
 
   // Filter predictions based on search
-  useEffect(() => {
-  const lowerSearch = search.toLowerCase();
-  setFiltered(
-    predictions.filter(
-      (p) => p.disease && p.disease.toLowerCase().includes(lowerSearch)
-    )
-  );
+useEffect(() => {
+  if (search.trim() === "") {
+    setFiltered(predictions);
+  } else {
+    const lowerSearch = search.toLowerCase();
+    setFiltered(
+      predictions.filter((p) => {
+        const diseaseName = p.disease ?? "unknown";
+        return diseaseName.toLowerCase().includes(lowerSearch);
+      })
+    );
+  }
 }, [search, predictions]);
 
 
