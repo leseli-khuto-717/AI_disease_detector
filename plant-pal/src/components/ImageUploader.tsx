@@ -74,22 +74,21 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
-        className={`w-full h-40 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer transition-colors ${
-          dragActive ? "border-green-600 bg-green-100" : "border-gray-300 bg-white"
+        className={`w-64 h-32 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer ${
+          dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
         }`}
       >
-        <p className="text-center text-gray-700">
-          {dragActive
-            ? "Drop the image here..."
-            : "Drag & drop an image or click to upload"}
-        </p>
+        <p>{dragActive ? "Drop the image here..." : "Drag & drop an image or click to upload"}</p>
+
+        {/* input inside only the div */}
         <input
           type="file"
           accept="image/*"
           onChange={handleChange}
-          className="absolute w-full h-full opacity-0 cursor-pointer"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         />
       </div>
+
 
       {loading && <p className="text-green-700 font-medium">Uploading & predicting...</p>}
 
