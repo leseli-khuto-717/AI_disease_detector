@@ -1,27 +1,28 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import Link from "next/link";
 
 export default function LayoutClient({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState("en");
+  const t = useTranslations();
 
   return (
     <>
       <header className="bg-green-700 text-white flex justify-between items-center p-4">
-        <h1 className="text-xl font-bold">Plant Pal</h1>
+        <h1 className="text-xl font-bold">{t("header.title")}</h1>
         <nav className="flex gap-4">
-          <Link href="/" className="hover:underline">Home</Link>
-          <Link href="/predictions" className="hover:underline">History</Link>
+          <Link href="/" className="hover:underline">{t("nav.home")}</Link>
+          <Link href="/predictions" className="hover:underline">{t("nav.history")}</Link>
         </nav>
-        <LanguageSwitcher currentLang={lang} setLang={setLang} />
+        <LanguageSwitcher />
       </header>
 
       <main className="flex-grow p-4">{children}</main>
 
       <footer className="bg-green-700 text-white text-center p-4">
-        © 2025 Crop AI Project
+        © 2025 Plant Pal
       </footer>
     </>
   );

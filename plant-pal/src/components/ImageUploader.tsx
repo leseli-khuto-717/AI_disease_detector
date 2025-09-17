@@ -4,7 +4,7 @@ import { useState, DragEvent, useRef } from "react";
 import Image from "next/image";
 
 interface Prediction {
-  disease: string;
+  disease_name: string;
   severity: string;
   treatment: string;
   image_url: string;
@@ -113,7 +113,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
           />
           <div className="text-center">
             <p>
-              <span className="font-semibold">Disease:</span> {prediction.disease}
+              <span className="font-semibold">Disease:</span> {prediction.disease_name}
             </p>
             <p>
               <span className="font-semibold">Severity:</span> {prediction.severity}

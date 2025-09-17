@@ -1,0 +1,11 @@
+{
+  "header.title": "Plant Pal",
+  "nav.home": "Home",
+  "nav.history": "History",
+  "upload.drag_here": "Drag & drop an image or click to upload",
+  "upload.drop": "Drop the image here...",
+  "prediction.disease": "Disease",
+  "prediction.severity": "Severity",
+  "prediction.treatment": "Treatment",
+  "history.no_data": "No predictions found"
+}

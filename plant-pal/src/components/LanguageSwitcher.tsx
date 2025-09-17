@@ -1,17 +1,18 @@
-interface Props {
-  currentLang: string;
-  setLang: (lang: string) => void;
-}
+"use client";
+import { useRouter } from "next-intl/client";
 
-export const LanguageSwitcher: React.FC<Props> = ({ currentLang, setLang }) => (
-  <div className="flex gap-2">
-    <button
-      className={currentLang === "en" ? "font-bold underline" : ""}
-      onClick={() => setLang("en")}
-    >English</button>
-    <button
-      className={currentLang === "st" ? "font-bold underline" : ""}
-      onClick={() => setLang("st")}
-    >Sesotho</button>
-  </div>
-);
+export function LanguageSwitcher() {
+  const router = useRouter();
+  const currentLocale = router.locale;
+
+  const toggleLanguage = () => {
+    const newLocale = currentLocale === "en" ? "st" : "en";
+    router.push(router.asPath, undefined, { locale: newLocale });
+  };
+
+  return (
+    <button onClick={toggleLanguage} className="px-2 py-1 border rounded hover:bg-green-200">
+      {currentLocale === "en" ? "Sesotho" : "English"}
+    </button>
+  );
+}

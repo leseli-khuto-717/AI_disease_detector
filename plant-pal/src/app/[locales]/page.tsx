@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { ImageUploader } from "../components/ImageUploader";
-import { PredictionCard } from "../components/PredictionCard";
+import { ImageUploader } from "../../components/ImageUploader";
+import { PredictionCard } from "../../components/PredictionCard";
 
 interface Prediction {
   disease: string;
