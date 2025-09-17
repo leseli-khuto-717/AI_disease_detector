@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, DragEvent } from "react";
+import { useState, DragEvent, useRef } from "react";
 import Image from "next/image";
 
 interface Prediction {
@@ -18,6 +18,8 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [prediction, setPrediction] = useState<Prediction | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadFile = async (file: File) => {
     setLoading(true);
@@ -44,13 +46,11 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
     }
   };
 
-  // File input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleUploadFile(file);
   };
 
-  // Drag events
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -66,6 +66,10 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
     if (file) handleUploadFile(file);
   };
 
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-md mx-auto">
       {/* Drag & drop area */}
@@ -74,21 +78,25 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
-        className={`w-64 h-32 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer ${
-          dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+        onClick={handleClick} // trigger file input
+        className={`relative w-full h-40 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer transition-colors ${
+          dragActive ? "border-green-600 bg-green-100" : "border-gray-300 bg-white"
         }`}
       >
-        <p>{dragActive ? "Drop the image here..." : "Drag & drop an image or click to upload"}</p>
-
-        {/* input inside only the div */}
+        <p className="text-center text-gray-700">
+          {dragActive
+            ? "Drop the image here..."
+            : "Drag & drop an image or click to upload"}
+        </p>
+        {/* File input is small and only inside this box, not covering layout */}
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handleChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="absolute w-full h-full opacity-0 cursor-pointer"
         />
       </div>
-
 
       {loading && <p className="text-green-700 font-medium">Uploading & predicting...</p>}
 
@@ -96,11 +104,11 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
       {prediction && (
         <div className="w-full bg-green-50 border border-green-200 rounded-md p-4 shadow-sm flex flex-col items-center gap-2">
           <Image
-            src={encodeURI(prediction.image_url)} // ✅ encode URL for safety
+            src={encodeURI(prediction.image_url)}
             alt="Uploaded"
-            width={320}  // recommended width for display
-            height={240} // recommended height for display
-            style={{ width: "100%", height: "auto" }} // responsive
+            width={320}
+            height={240}
+            style={{ width: "100%", height: "auto" }}
             className="rounded shadow-md"
           />
           <div className="text-center">
