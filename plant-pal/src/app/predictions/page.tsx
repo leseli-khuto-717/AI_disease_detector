@@ -1,78 +1,70 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { fetchPredictions, supabaseDeletePrediction } from "../lib/api";
-import { PredictionCard } from "../../components/PredictionCard";
+import axios from "axios";
 
 interface Prediction {
   id: string;
-  image_url: string;
   disease: string;
   severity: string;
   treatment: string;
+  image_url: string;
+  created_at: string;
 }
 
-export default function SavedPredictions() {
+export default function PredictionsPage() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
-  const [filtered, setFiltered] = useState<Prediction[]>([]);
-  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
-      const data = await fetchPredictions();
-      setPredictions(data);
-      setFiltered(data);
+    const fetchPredictions = async () => {
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/predict`);
+        setPredictions(res.data);
+      } catch (err) {
+        console.error("Error fetching predictions:", err);
+      } finally {
+        setLoading(false);
+      }
     };
-    load();
+
+    fetchPredictions();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this prediction?")) return;
-    await supabaseDeletePrediction(id);
-    const updated = predictions.filter((p) => p.id !== id);
-    setPredictions(updated);
-    setFiltered(updated);
-  };
+  if (loading) {
+    return <div className="text-center text-green-700">Loading predictions...</div>;
+  }
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value.toLowerCase();
-    setSearch(term);
-    setFiltered(
-      predictions.filter((p) =>
-        p.disease.toLowerCase().includes(term)
-      )
-    );
-  };
+  if (predictions.length === 0) {
+    return <div className="text-center text-green-700">No saved predictions yet.</div>;
+  }
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full p-4">
-      <input
-        type="text"
-        placeholder="Search by disease..."
-        value={search}
-        onChange={handleSearch}
-        className="w-full max-w-md p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-400"
-      />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-        {filtered.map((p) => (
-          <div key={p.id} className="flex flex-col items-center gap-2">
-            <Image
-              src={p.image_url}
-              alt={p.disease}
-              width={300}
-              height={192}
-              className="w-full h-48 object-cover rounded-xl shadow-md"
-            />
-            <PredictionCard
-              id={p.id}
-              disease={p.disease}
-              severity={p.severity}
-              treatment={p.treatment}
-              onDelete={handleDelete}
-            />
+    <div className="max-w-6xl mx-auto p-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {predictions.map((p) => (
+        <div
+          key={p.id}
+          className="bg-green-100 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+        >
+          <img
+            src={p.image_url}
+            alt={p.disease}
+            className="h-48 w-full object-cover"
+          />
+          <div className="p-4">
+            <h3 className="text-lg font-bold text-green-800">{p.disease}</h3>
+            <p className="text-sm text-green-700">
+              <strong>Severity:</strong> {p.severity}
+            </p>
+            <p className="text-sm text-green-700">
+              <strong>Treatment:</strong> {p.treatment}
+            </p>
+            <p className="text-xs text-green-600 mt-2">
+              {new Date(p.created_at).toLocaleString()}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
