@@ -26,7 +26,7 @@ export default function PredictionsPage() {
     const fetchPredictions = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/predict`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/predictions`
         );
         setPredictions(res.data);
         setFiltered(res.data);
