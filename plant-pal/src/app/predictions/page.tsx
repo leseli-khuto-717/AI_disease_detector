@@ -38,13 +38,14 @@ export default function PredictionsPage() {
 
   // Filter predictions based on search
   useEffect(() => {
-    const lowerSearch = search.toLowerCase();
-    setFiltered(
-      predictions.filter((p) =>
-        p.disease.toLowerCase().includes(lowerSearch)
-      )
-    );
-  }, [search, predictions]);
+  const lowerSearch = search.toLowerCase();
+  setFiltered(
+    predictions.filter(
+      (p) => p.disease && p.disease.toLowerCase().includes(lowerSearch)
+    )
+  );
+}, [search, predictions]);
+
 
   return (
     <div className="max-w-6xl mx-auto p-4">
