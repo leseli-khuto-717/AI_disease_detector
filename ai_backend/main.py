@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware  # ✅ NEW
+from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras.models import load_model
 from PIL import Image, UnidentifiedImageError
 import numpy as np
@@ -20,7 +20,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # Load AI model
 model = load_model(MODEL_PATH)
 
-# Define disease classes and treatments (same as before)
+# Define disease classes and treatments
 disease_classes = [
     'bean_rust','maize_blight','maize_healthy','maize_gray_leaf_spot','maize_common_rust',
     'bean_healthy','bean_angular_leaf_spot','tomato_bacterial_spot','tomato_early_blight',
@@ -52,10 +52,10 @@ treatments = {
 # Initialize FastAPI
 app = FastAPI(title="Crop Disease Detection API")
 
-# ✅ Enable CORS for your frontend(s)
+# Enable CORS
 origins = [
-    "https://reimagined-palm-tree-pj7p7jwg4jjwhrvpr-3000.app.github.dev",       # Local frontend
-    "https://ai-disease-detector.vercel.app"  # Deployed frontend
+    "https://reimagined-palm-tree-pj7p7jwg4jjwhrvpr-3000.app.github.dev",
+    "https://ai-disease-detector.vercel.app"
 ]
 
 app.add_middleware(
@@ -71,7 +71,6 @@ ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"]
 
 @app.post("/predict/")
 async def predict_crop(file: UploadFile = File(...)):
-
     # 1️⃣ Validate file type
     ext = file.filename.split(".")[-1].lower()
     if ext not in ALLOWED_EXTENSIONS:
@@ -126,3 +125,12 @@ async def predict_crop(file: UploadFile = File(...)):
         "severity": severity,
         "treatment": treatment
     }
+
+# ✅ NEW: Fetch all saved predictions
+@app.get("/predictions/")
+def get_predictions():
+    try:
+        response = supabase.table("backend").select("*").order("created_at", desc=True).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching predictions: {str(e)}")
