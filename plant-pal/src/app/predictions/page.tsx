@@ -6,7 +6,7 @@ import axios from "axios";
 interface Prediction {
   id: string;
   crop_name?: string;
-  disease?: string;
+  disease_name?: string;
   severity?: number;
   treatment?: string;
   image_url?: string;
@@ -47,7 +47,7 @@ export default function PredictionsPage() {
     const lowerSearch = search.toLowerCase();
     if (search.trim() !== "") {
       temp = temp.filter((p) => {
-        const diseaseName = p.disease ?? "unknown";
+        const diseaseName = p.disease_name ?? "unknown";
         return diseaseName.toLowerCase().includes(lowerSearch);
       });
     }
@@ -144,12 +144,12 @@ export default function PredictionsPage() {
             >
               <img
                 src={p.image_url ?? ""}
-                alt={p.disease ?? "unknown"}
+                alt={p.disease_name ?? "unknown"}
                 className="h-48 w-full object-cover"
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold text-green-800">
-                  {p.disease ?? "Unknown"}
+                  {p.disease_name ?? "Unknown"}
                 </h3>
                 <p className="text-sm text-green-700">
                   <strong>Crop:</strong> {p.crop_name ?? "N/A"}
