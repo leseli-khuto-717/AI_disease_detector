@@ -10,10 +10,10 @@ export default function LayoutClient({ children }: { children: ReactNode }) {
   return (
     <>
       <header className="bg-green-700 text-white flex justify-between items-center p-4">
-        <h1 className="text-xl font-bold">AI Crop Disease Detector</h1>
+        <h1 className="text-xl font-bold">Plant Pal</h1>
         <nav className="flex gap-4">
           <Link href="/" className="hover:underline">Home</Link>
-          <Link href="/predictions" className="hover:underline">Saved</Link>
+          <Link href="/predictions" className="hover:underline">History</Link>
         </nav>
         <LanguageSwitcher currentLang={lang} setLang={setLang} />
       </header>
