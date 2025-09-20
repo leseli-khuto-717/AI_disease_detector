@@ -12,7 +12,7 @@ export default function Navbar() {
   const inactiveClass = "hover:underline text-black";
 
   return (
-    <nav className="bg-blue-500 text-white flex justify-between items-center p-4 rounded-b-lg">
+    <nav className="bg-[#0B978B] text-white flex justify-between items-center py-2 px-4 rounded-b-lg">
       <h1 className="text-[1.6rem] text-black font-bold">{t("header.title")}</h1>
       <ul className="flex gap-4">
         <Link

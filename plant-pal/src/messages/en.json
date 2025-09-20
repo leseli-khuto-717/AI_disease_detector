@@ -35,7 +35,8 @@
 	"disease": "Disease",
         "severity": "Severity",
         "treatment": "Treatment",
-	"name": "Crop"
+	"name": "Crop",
+	"search_placeholder":"Search here "
 
   },
   

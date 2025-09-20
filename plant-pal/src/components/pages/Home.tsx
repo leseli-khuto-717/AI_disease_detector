@@ -26,9 +26,11 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <ImageUploader onUpload={handleUpload} />
-      <h2 className="text-[1.15rem] font-black ">{t('image')}</h2>
+    <div className="flex flex-col md:flex-row items-center gap-6">
+     <div className={"gap-6 flex flex-col items-center"}>
+     	 <ImageUploader onUpload={handleUpload} />
+      	<h2 className="text-[1.15rem] font-black ">{t('image')}</h2>
+      </div>
       {prediction && (
         <PredictionCard
           disease={prediction.disease_name}

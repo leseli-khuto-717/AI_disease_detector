@@ -83,7 +83,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
         onDrop={handleDrop}
         onClick={handleClick} // trigger file input
         className={`relative w-88 h-80 flex items-center justify-center  rounded-[40px] cursor-pointer transition-colors ${
-          dragActive ? "border-green-600 bg-green-100" : "bg-blue-400 bg-opacity-50"
+          dragActive ? "border-green-600" : "bg-[#31B96A] bg-opacity-90"
         }`}
       >
         <div className="text-center text-gray-700">
@@ -91,7 +91,14 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
             ? <span>{t('drop_image')}</span>
             :<div className={"flex flex-col justify-center items-center justify-evenly"}> 
             <Image src={"/drag-default.png"} alt={t('drag_here')} width={300} height={150} className={" rounded-[20px] opacity-55 mt-10 "}/> 
-            <span className={"bg-blue-500 items-center justify-center text-center px-4 py-4 overlay translate-y-[30px] rounded-full  w-14 h-14 "}> CA </span>
+            <div className={"bg-[#0B978B] items-center justify-center text-center px-2 py-3 overlay translate-y-[30px] rounded-full  w-16 h-16  "} >
+            <Image 
+            	src={"/camera.png"}
+            	width={60}
+            	height={60}
+            	alt={"camera"}
+            	 />
+            	 </div>
             </div>}
         </div>
         {/* File input is small and only inside this box, not covering layout */}

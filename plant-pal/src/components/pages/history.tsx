@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {useTranslations} from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import axios from "axios";
 import Image from "next/image";
 
@@ -15,25 +15,23 @@ interface Prediction {
   created_at?: string;
 }
 
-
-
 export default function History() {
- 
- const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [filtered, setFiltered] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cropFilter, setCropFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-  
-  const t = useTranslations('histories');
 
-  // Fetch predictions from backend
+  const t = useTranslations('histories');
+  const locale = useLocale(); // Get current locale
+
+  // Fetch predictions from backend in the correct locale
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/predictions`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/predictions?locale=${locale}`
         );
         setPredictions(res.data);
         setFiltered(res.data);
@@ -44,29 +42,25 @@ export default function History() {
       }
     };
     fetchPredictions();
-  }, []);
+  }, [locale]); // refetch if locale changes
 
   // Filter & sort predictions
   useEffect(() => {
     let temp = [...predictions];
 
-    // Search filter
     const lowerSearch = search.toLowerCase();
     if (search.trim() !== "") {
-      temp = temp.filter((p) => {
-        const diseaseName = p.disease_name ?? "unknown";
-        return diseaseName.toLowerCase().includes(lowerSearch);
-      });
+      temp = temp.filter((p) =>
+        (p.disease_name ?? "unknown").toLowerCase().includes(lowerSearch)
+      );
     }
 
-    // Crop filter
     if (cropFilter !== "all") {
       temp = temp.filter(
         (p) => (p.crop_name ?? "unknown").toLowerCase() === cropFilter
       );
     }
 
-    // Sort by date
     temp.sort((a, b) => {
       const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
       const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
@@ -76,7 +70,6 @@ export default function History() {
     setFiltered(temp);
   }, [search, cropFilter, sortOrder, predictions]);
 
-  // Severity color coding
   const severityColor = (severity?: number) => {
     if (severity === undefined) return "bg-gray-200";
     if (severity > 0.7) return "bg-red-200";
@@ -92,16 +85,13 @@ export default function History() {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
-        {/* Search */}
         <input
           type="text"
-          placeholder="Search by disease..."
+          placeholder={t('search_placeholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full sm:w-64 p-2 rounded-lg border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
         />
-
-        {/* Crop type filter */}
         <select
           value={cropFilter}
           onChange={(e) => setCropFilter(e.target.value)}
@@ -112,8 +102,6 @@ export default function History() {
           <option value="beans">{t('beans')}</option>
           <option value="tomato">{t('tomato')}</option>
         </select>
-
-        {/* Sort by date */}
         <select
           value={sortOrder}
           onChange={(e) =>
@@ -126,7 +114,6 @@ export default function History() {
         </select>
       </div>
 
-      {/* Loading */}
       {loading ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -137,9 +124,7 @@ export default function History() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center text-green-700">
-         {t('nothing')}
-        </div>
+        <div className="text-center text-green-700">{t('nothing')}</div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
@@ -181,3 +166,4 @@ export default function History() {
     </div>
   );
 }
+

@@ -32,7 +32,8 @@
     "disease": "Sehlooho sa Sechaba",
     "severity": "Bobe",
     "treatment": "Kalafo",
-    "name": "Semela"
+    "name": "Semela",
+    "search_placeholder": "Semela"
   },
   "Localeswitcher": {
   	"label": "Fetola puo",
