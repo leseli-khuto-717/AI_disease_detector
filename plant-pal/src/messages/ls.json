@@ -1,0 +1,48 @@
+{
+  "header": {
+    "title": "Plant-Pal"
+  },
+  "history": "Histori",
+  "nav": {
+    "home": "Lehae",
+    "history": "Histori"
+  },
+  "upload": {
+    "image": "Sheba boemo ba sejalo ka ho kenya setshantso",
+    "drag_here": "Sutha & o lahlele setšoantšo kapa tobetsa ho kenya",
+    "drop_image": "Lahlela setšoantšo mona...",
+    "loading": "Ho kenya & ho hakanya..."
+  },
+  "prediction": {
+    "disease": "Sehlooho sa Sechaba",
+    "severity": "Bobe",
+    "treatment": "Kalafo",
+    "no_data": "Ha ho bopehelo bo fumanoeng",
+    "delete": "Hlakola"
+  },
+  "histories": {
+    "title": "Bopehelo bo bolokiloeng ba Malwetso a Meru",
+    "crops": "Meru Yohle",
+    "maize": "Perele",
+    "beans": "Pinto / Dinawa",
+    "tomato": "Tamati",
+    "newest_time": "Nako e Ncha ka ho Fetisisa",
+    "oldest_time": "Nako e Khale ka ho Fetisisa",
+    "nothing": "Ha ho bopehelo bo lumellanang le lipatlisiso kapa li-filters tsa hau.",
+    "disease": "Sehlooho sa Sechaba",
+    "severity": "Bobe",
+    "treatment": "Kalafo",
+    "name": "Semela"
+  },
+  "Localeswitcher": {
+  	"label": "Fetola puo",
+  	"locale": "{locale, select, en {English} ls {Sesotho} other {unknown}}"
+  },
+  "LocaleLayout":{
+  	"title": "Plant Pal"
+  },
+  "Metadata": {
+    "title": "Plant Pal"
+   }
+}
+

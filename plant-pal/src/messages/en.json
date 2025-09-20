@@ -1,0 +1,56 @@
+{
+ "header":{
+	"title": "Plant-Pal"
+},
+"history": "History",
+ "nav": {
+  	"home": "Home",
+  	"history": "History"
+ },
+
+ "upload": {
+	"image": "Check plant health by photo", 
+ 	"drag_here": "Drag & drop an image or click to upload",
+  	"drop_image": "Drop the image here...",
+	"loading": "Uploading & predicting... "
+ },
+
+ "prediction": {
+  	"disease": "Disease",
+  	"severity": "Severity",
+  	"treatment": "Treatment",
+  	"no_data": "No predictions found",
+	"delete": "Delete"
+  },
+
+  "histories": {
+	"title": "Saved Crop Disease Predictions",
+	"crops":"All Crops",
+	"maize": "Maize",
+	"beans": "Beans",
+	"tomato": "Tomato",
+	"newest_time": "Newest-time",
+	"oldest_time": "Oldest-time",
+	"nothing": " No predictions match your search or filters.",
+	"disease": "Disease",
+        "severity": "Severity",
+        "treatment": "Treatment",
+	"name": "Crop"
+
+  },
+  
+  "Localeswitcher": {
+  	"label": "change langauge",
+  	"locale": "{locale, select, en {English} ls {Sesotho} other {unknown}}"
+  
+  },
+   "Metadata": {
+    "title": "Plant Pal"
+   },
+  
+  "LocaleLayout":{
+  	"title": "Plant Pal"
+  }
+ 
+
+}

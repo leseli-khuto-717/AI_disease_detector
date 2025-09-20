@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, DragEvent, useRef } from "react";
+import {useTranslations} from 'next-intl';
 import Image from "next/image";
 
 interface Prediction {
@@ -20,6 +21,8 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
   const [prediction, setPrediction] = useState<Prediction | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const t = useTranslations('upload');
 
   const handleUploadFile = async (file: File) => {
     setLoading(true);
@@ -79,15 +82,18 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         onClick={handleClick} // trigger file input
-        className={`relative w-full h-40 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer transition-colors ${
-          dragActive ? "border-green-600 bg-green-100" : "border-gray-300 bg-white"
+        className={`relative w-88 h-80 flex items-center justify-center  rounded-[40px] cursor-pointer transition-colors ${
+          dragActive ? "border-green-600 bg-green-100" : "bg-blue-400 bg-opacity-50"
         }`}
       >
-        <p className="text-center text-gray-700">
+        <div className="text-center text-gray-700">
           {dragActive
-            ? "Drop the image here..."
-            : "Drag & drop an image or click to upload"}
-        </p>
+            ? <span>{t('drop_image')}</span>
+            :<div className={"flex flex-col justify-center items-center justify-evenly"}> 
+            <Image src={"/drag-default.png"} alt={t('drag_here')} width={300} height={150} className={" rounded-[20px] opacity-55 mt-10 "}/> 
+            <span className={"bg-blue-500 items-center justify-center text-center px-4 py-4 overlay translate-y-[30px] rounded-full  w-14 h-14 "}> CA </span>
+            </div>}
+        </div>
         {/* File input is small and only inside this box, not covering layout */}
         <input
           ref={fileInputRef}
@@ -98,7 +104,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
         />
       </div>
 
-      {loading && <p className="text-green-700 font-medium">Uploading & predicting...</p>}
+      {loading && <p className="text-green-700 font-medium">{t('loading')}</p>}
 
       {/* Display prediction */}
       {prediction && (
@@ -113,13 +119,13 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
           />
           <div className="text-center">
             <p>
-              <span className="font-semibold">Disease:</span> {prediction.disease_name}
+              <span className="font-semibold">{t('disease')}:</span> {prediction.disease_name}
             </p>
             <p>
-              <span className="font-semibold">Severity:</span> {prediction.severity}
+              <span className="font-semibold">{t('severity')}:</span> {prediction.severity}
             </p>
             <p>
-              <span className="font-semibold">Treatment:</span> {prediction.treatment}
+              <span className="font-semibold">{t('treatment')}:</span> {prediction.treatment}
             </p>
           </div>
         </div>

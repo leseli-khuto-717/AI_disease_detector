@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {useTranslations} from 'next-intl';
 import axios from "axios";
+import Image from "next/image";
 
 interface Prediction {
   id: string;
@@ -13,13 +15,18 @@ interface Prediction {
   created_at?: string;
 }
 
-export default function PredictionsPage() {
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
+
+
+export default function History() {
+ 
+ const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [filtered, setFiltered] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cropFilter, setCropFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  
+  const t = useTranslations('histories');
 
   // Fetch predictions from backend
   useEffect(() => {
@@ -80,7 +87,7 @@ export default function PredictionsPage() {
   return (
     <div className="max-w-6xl mx-auto p-4">
       <h1 className="text-2xl font-bold text-green-800 mb-4 text-center">
-        Saved Crop Disease Predictions
+        {t('title')}
       </h1>
 
       {/* Filters */}
@@ -100,10 +107,10 @@ export default function PredictionsPage() {
           onChange={(e) => setCropFilter(e.target.value)}
           className="w-full sm:w-48 p-2 rounded-lg border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
         >
-          <option value="all">All Crops</option>
-          <option value="maize">Maize</option>
-          <option value="beans">Beans</option>
-          <option value="tomato">Tomato</option>
+          <option value="all">{t('crops')}</option>
+          <option value="maize">{t('maize')}</option>
+          <option value="beans">{t('beans')}</option>
+          <option value="tomato">{t('tomato')}</option>
         </select>
 
         {/* Sort by date */}
@@ -114,8 +121,8 @@ export default function PredictionsPage() {
           }
           className="w-full sm:w-48 p-2 rounded-lg border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
         >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
+          <option value="newest">{t('newest_time')}</option>
+          <option value="oldest">{t('oldest_time')}</option>
         </select>
       </div>
 
@@ -131,7 +138,7 @@ export default function PredictionsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center text-green-700">
-          No predictions match your search or filters.
+         {t('nothing')}
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -142,7 +149,7 @@ export default function PredictionsPage() {
                 p.severity
               )}`}
             >
-              <img
+              <Image
                 src={p.image_url ?? ""}
                 alt={p.disease_name ?? "unknown"}
                 className="h-48 w-full object-cover"
@@ -152,14 +159,14 @@ export default function PredictionsPage() {
                   {p.disease_name ?? "Unknown"}
                 </h3>
                 <p className="text-sm text-green-700">
-                  <strong>Crop:</strong> {p.crop_name ?? "N/A"}
+                  <strong>{t('name')}:</strong> {p.crop_name ?? "N/A"}
                 </p>
                 <p className="text-sm text-green-700">
-                  <strong>Severity:</strong>{" "}
+                  <strong>{t('severity')}:</strong>{" "}
                   {p.severity !== undefined ? p.severity.toFixed(2) : "N/A"}
                 </p>
                 <p className="text-sm text-green-700">
-                  <strong>Treatment:</strong> {p.treatment ?? "N/A"}
+                  <strong>{t('treatment')}:</strong> {p.treatment ?? "N/A"}
                 </p>
                 <p className="text-xs text-green-600 mt-2">
                   {p.created_at
