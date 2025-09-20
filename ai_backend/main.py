@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras.models import load_model
 from PIL import Image, UnidentifiedImageError
@@ -14,13 +14,10 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 MODEL_PATH = os.getenv("MODEL_PATH")
 
-# Initialize Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# Load AI model
 model = load_model(MODEL_PATH)
 
-# Define disease classes and treatments
+# Disease classes
 disease_classes = [
     'bean_rust','maize_blight','maize_healthy','maize_gray_leaf_spot','maize_common_rust',
     'bean_healthy','bean_angular_leaf_spot','tomato_bacterial_spot','tomato_early_blight',
@@ -29,30 +26,8 @@ disease_classes = [
     'tomato_tomato_yellow_leaf_curl_virus','tomato_tomato_mosaic_virus','tomato_healthy'
 ]
 
-treatments = {
-    'bean_rust': 'Remove infected leaves, apply neem-based fungicide.',
-    'maize_blight': 'Use resistant seeds, crop rotation, apply copper fungicide.',
-    'maize_healthy': 'No treatment needed, continue normal care.',
-    'maize_gray_leaf_spot': 'Remove infected leaves, apply appropriate fungicide.',
-    'maize_common_rust': 'Remove rust spots, avoid overhead watering.',
-    'bean_healthy': 'No treatment needed, continue normal care.',
-    'bean_angular_leaf_spot': 'Remove infected leaves, use organic fungicides.',
-    'tomato_bacterial_spot': 'Use copper-based sprays, remove infected leaves.',
-    'tomato_early_blight': 'Apply neem or sulfur fungicides, remove affected leaves.',
-    'tomato_late_blight': 'Use resistant varieties, remove infected leaves, apply fungicide.',
-    'tomato_leaf_mold': 'Improve air circulation, apply copper fungicide.',
-    'tomato_septoria_leaf_spot': 'Remove infected leaves, apply organic fungicide.',
-    'tomato_spider_mites_two-spotted_spider_mite': 'Spray neem oil or insecticidal soap.',
-    'tomato_target_spot': 'Remove affected leaves, apply copper fungicide.',
-    'tomato_tomato_yellow_leaf_curl_virus': 'Use resistant varieties, control whiteflies.',
-    'tomato_tomato_mosaic_virus': 'Remove infected plants, sanitize tools.',
-    'tomato_healthy': 'No treatment needed, continue normal care.'
-}
-
-# Initialize FastAPI
 app = FastAPI(title="Crop Disease Detection API")
 
-# Enable CORS
 origins = [
     "https://reimagined-palm-tree-pj7p7jwg4jjwhrvpr-3000.app.github.dev",
     "https://ai-disease-detector.vercel.app"
@@ -66,38 +41,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Allowed image types
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"]
 
+# ---------------------------------------------
+# Helper function: Fetch treatment by disease and locale
+# ---------------------------------------------
+def get_treatment(disease_name: str, locale: str = "en") -> str:
+    response = supabase.table("disease_translations") \
+        .select("treatment") \
+        .eq("disease_name", disease_name) \
+        .eq("locale", locale) \
+        .execute()
+    if response.data:
+        return response.data[0]["treatment"]
+    # fallback to English if locale not found
+    fallback = supabase.table("disease_translations") \
+        .select("treatment") \
+        .eq("disease_name", disease_name) \
+        .eq("locale", "en") \
+        .execute()
+    return fallback.data[0]["treatment"] if fallback.data else "No treatment available"
+
+# ---------------------------------------------
+# POST /predict/
+# ---------------------------------------------
 @app.post("/predict/")
-async def predict_crop(file: UploadFile = File(...)):
-    # 1️⃣ Validate file type
+async def predict_crop(file: UploadFile = File(...), locale: str = Query("en")):
     ext = file.filename.split(".")[-1].lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=400, detail="Invalid file type. Only jpg, jpeg, png allowed.")
 
     try:
-        # 2️⃣ Read and preprocess image
         img = Image.open(file.file).convert("RGB").resize((128, 128))
-        img_array = np.array(img, dtype=np.float32) / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
-    except UnidentifiedImageError:
-        raise HTTPException(status_code=400, detail="Cannot read image file.")
+        img_array = np.expand_dims(np.array(img, dtype=np.float32)/255.0, axis=0)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
     try:
-        # 3️⃣ Run AI prediction
         prediction = model.predict(img_array)
         predicted_index = int(np.argmax(prediction))
         predicted_disease = disease_classes[predicted_index]
         severity = float(np.max(prediction))
-        treatment = treatments[predicted_disease]
+        treatment = get_treatment(predicted_disease, locale)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error predicting disease: {str(e)}")
 
     try:
-        # 4️⃣ Upload image to Supabase Storage
         file.file.seek(0)
         file_bytes = file.file.read()
         storage_path = f"{file.filename}"
@@ -107,30 +96,46 @@ async def predict_crop(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Error uploading image: {str(e)}")
 
     try:
-        # 5️⃣ Insert prediction into Supabase Database
         supabase.table("backend").insert({
             "image_url": image_url,
             "crop_name": file.filename.split('_')[0],
             "disease_name": predicted_disease,
             "severity": severity,
-            "treatment": treatment
+            "treatment": treatment,
+            "locale": locale
         }).execute()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error saving to database: {str(e)}")
 
-    # 6️⃣ Return JSON response
     return {
         "image_url": image_url,
         "disease": predicted_disease,
         "severity": severity,
-        "treatment": treatment
+        "treatment": treatment,
+        "locale": locale
     }
 
-# ✅ NEW: Fetch all saved predictions
+# ---------------------------------------------
+# GET /predictions/
+# ---------------------------------------------
 @app.get("/predictions/")
-def get_predictions():
+def get_predictions(locale: str = Query("en")):
+    """
+    Fetch all predictions with treatments in the requested locale.
+    Uses helper function to fetch treatment if needed.
+    """
     try:
-        response = supabase.table("backend").select("*").order("created_at", desc=True).execute()
-        return response.data
+        predictions = supabase.table("backend").select("*").order("created_at", desc=True).execute()
+        localized_predictions = []
+
+        for record in predictions.data:
+            if record.get("locale") != locale:
+                record["treatment"] = get_treatment(record["disease_name"], locale)
+                record["locale"] = locale
+            localized_predictions.append(record)
+
+        return localized_predictions
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching predictions: {str(e)}")
+
