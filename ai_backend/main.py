@@ -29,7 +29,7 @@ disease_classes = [
 app = FastAPI(title="Crop Disease Detection API")
 
 origins = [
-    "https://reimagined-palm-tree-pj7p7jwg4jjwhrvpr-3000.app.github.dev",
+    "https://localhost:3000",
     "https://ai-disease-detector.vercel.app"
 ]
 
