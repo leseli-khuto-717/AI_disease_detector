@@ -128,39 +128,40 @@ export default function History() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
-            <div
-              key={p.id}
-              className={`rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow ${severityColor(
-                p.severity
-              )}`}
-            >
-              <Image
-                src={p.image_url ?? ""}
-                alt={p.disease_name ?? "unknown"}
-                className="h-48 w-full object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-green-800">
-                  {p.disease_name ?? "Unknown"}
-                </h3>
-                <p className="text-sm text-green-700">
-                  <strong>{t('name')}:</strong> {p.crop_name ?? "N/A"}
-                </p>
-                <p className="text-sm text-green-700">
-                  <strong>{t('severity')}:</strong>{" "}
-                  {p.severity !== undefined ? p.severity.toFixed(2) : "N/A"}
-                </p>
-                <p className="text-sm text-green-700">
-                  <strong>{t('treatment')}:</strong> {p.treatment ?? "N/A"}
-                </p>
-                <p className="text-xs text-green-600 mt-2">
-                  {p.created_at
-                    ? new Date(p.created_at).toLocaleString()
-                    : "Unknown date"}
-                </p>
-              </div>
-            </div>
-          ))}
+  <div
+    key={p.id}
+    className={`rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow ${severityColor(p.severity)}`}
+  >
+    <Image
+      src={p.image_url ?? ""}
+      alt={p.disease_name ?? "unknown"}
+      className="h-48 w-full object-cover"
+    />
+    <div className="p-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-green-800">
+          {p.disease_name ?? "Unknown"}
+        </h3>
+        <span className="text-xs text-gray-500 italic">
+          {locale.toUpperCase()} {/* Show current language */}
+        </span>
+      </div>
+      <p className="text-sm text-green-700">
+        <strong>{t('name')}:</strong> {p.crop_name ?? "N/A"}
+      </p>
+      <p className="text-sm text-green-700">
+        <strong>{t('severity')}:</strong> {p.severity !== undefined ? p.severity.toFixed(2) : "N/A"}
+      </p>
+      <p className="text-sm text-green-700">
+        <strong>{t('treatment')}:</strong> {p.treatment ?? "N/A"}
+      </p>
+      <p className="text-xs text-green-600 mt-2">
+        {p.created_at ? new Date(p.created_at).toLocaleString() : "Unknown date"}
+      </p>
+    </div>
+  </div>
+))}
+
         </div>
       )}
     </div>

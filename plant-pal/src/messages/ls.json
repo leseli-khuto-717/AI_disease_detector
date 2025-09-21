@@ -8,6 +8,9 @@
     "history": "Histori"
   },
   "upload": {
+    "disease": "Lefu",
+     "severity": "boemo",
+    "treatment": "Pheko",
     "image": "Sheba boemo ba sejalo ka ho kenya setshantso",
     "drag_here": "Sutha & o lahlele setšoantšo kapa tobetsa ho kenya",
     "drop_image": "Lahlela setšoantšo mona...",

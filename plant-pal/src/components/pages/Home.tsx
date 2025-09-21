@@ -3,15 +3,7 @@ import { useState } from "react";
 import { ImageUploader } from "../ImageUploader";
 import { PredictionCard } from "../PredictionCard";
 import {useTranslations} from 'next-intl';
-
-
-interface Prediction {
-  disease_name: string;
-  severity: string;
-  treatment: string;
-  image_url: string;
-}
-
+import { Prediction } from "../../types"; // adjust path as needed
 
 export default function Home() {
 
@@ -34,7 +26,7 @@ export default function Home() {
       {prediction && (
         <PredictionCard
           disease={prediction.disease_name}
-          severity={prediction.severity}
+          severity={prediction.severity.toString()}
           treatment={prediction.treatment}
         />
       )}
