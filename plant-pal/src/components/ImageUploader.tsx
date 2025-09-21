@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, DragEvent, useRef } from "react";
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Prediction } from "../types"; // adjust path as needed
-
-
 
 interface Props {
   onUpload: (prediction: Prediction) => void;
@@ -18,20 +16,20 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations('upload');
-  const locale = useLocale(); // ✅ Correctly get current frontend locale
+  const locale = useLocale(); // ✅ current frontend locale
 
   const handleUploadFile = async (file: File) => {
     setLoading(true);
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("locale", locale); // ✅ send locale in POST body
 
     try {
-      // ✅ Send locale to backend
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/predict/?locale=${locale}`,
-        { method: "POST", body: formData }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/predict/`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) throw new Error("Prediction failed");
 
