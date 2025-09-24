@@ -11,12 +11,16 @@
  "upload": {
 	"image": "Check plant health by photo", 
  	"drag_here": "Drag & drop an image or click to upload",
+ 	"upload_image":  "Upload Image",
+ 	"invalid_file_type": "Invalid file type",
   	"drop_image": "Drop the image here...",
 	"loading": "Uploading & predicting... ",
         "drag_or_click": "Drag or click to upload a file",
         "disease": "Disease",
         "severity": "Severity",
-        "treatment": "Treatment"
+        "treatment": "Treatment",
+         "upload_error": "Error uploading image",
+         "file_too_large": "File is too large"
  },
 
  "prediction": {

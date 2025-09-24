@@ -15,7 +15,11 @@
    "drag_or_click": "Hula kapa tobetsa ho kenya faele",
     "drag_here": "Sutha & o lahlele setšoantšo kapa tobetsa ho kenya",
     "drop_image": "Lahlela setšoantšo mona...",
-    "loading": "Ho kenya & ho hakanya..."
+    "loading": "Ho kenya & ho hakanya...",
+     "upload_image": "Kenya Setšoantšo",
+     "invalid_file_type": "Mofuta oa faele ha o lumelloe",
+    "file_too_large": "Faele e kholo haholo",
+    "upload_error": "Phoso ha ho kenya setšoantšo"
   },
   "prediction": {
     "disease": "Sehlooho sa Sechaba",
