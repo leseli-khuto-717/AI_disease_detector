@@ -39,7 +39,7 @@ app = FastAPI(title="Crop Disease Detection API")
 
 origins = [
     "https://localhost:3000",
-    "https://ai-disease-detector.vercel.app/"
+    "https://ai-disease-detector.vercel.app"
 ]
 
 app.add_middleware(
