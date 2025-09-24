@@ -12,7 +12,11 @@
 	"image": "Check plant health by photo", 
  	"drag_here": "Drag & drop an image or click to upload",
   	"drop_image": "Drop the image here...",
-	"loading": "Uploading & predicting... "
+	"loading": "Uploading & predicting... ",
+        "drag_or_click": "Drag or click to upload a file",
+        "disease": "Disease",
+        "severity": "Severity",
+        "treatment": "Treatment"
  },
 
  "prediction": {
