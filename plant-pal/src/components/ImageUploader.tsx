@@ -152,7 +152,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
               {prediction?.disease}
             </p>
             <p>
-              <span className="font-semibold text-teal-600">{t("severity")}:</span> {prediction.severity}
+              <span className="font-semibold text-teal-600">{t("severity")}:</span>  {(prediction.severity * 100).toFixed(2)}%
             </p>
             <p>
               <span className="font-semibold text-teal-600">{t("treatment")}:</span> {prediction.treatment}
