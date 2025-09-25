@@ -78,11 +78,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
     fileInputRef.current?.click();
   };
 
-  const formatDiseaseName = (name: string) =>
-    name
-      .split("_")
-      .map((word) => word[0].toUpperCase() + word.slice(1))
-      .join(" ");
+
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg relative">
@@ -153,7 +149,7 @@ export const ImageUploader: React.FC<Props> = ({ onUpload }) => {
           <div className="text-center text-gray-700">
             <p>
               <span className="font-semibold text-teal-600">{t("disease")}:</span>{" "}
-              {formatDiseaseName(prediction.disease_name)}
+              {prediction.disease_name}
             </p>
             <p>
               <span className="font-semibold text-teal-600">{t("severity")}:</span> {prediction.severity}
