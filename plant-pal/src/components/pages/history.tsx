@@ -150,9 +150,7 @@ export default function History() {
         <strong>{t('name')}:</strong> {p.crop_name ?? "N/A"}
       </p>
       <p className="text-sm text-green-700">
-        <strong>{t('severity')}:</strong>{p.severity !== undefined
-  ? (parseFloat(p.severity) * 100).toFixed(2) + "%"
-  : "N/A"}
+        <strong>{t('severity')}:</strong>{p.severity !== undefined ? p.severity.toFixed(2) : "N/A"}
       </p>
       <p className="text-sm text-green-700">
         <strong>{t('treatment')}:</strong> {p.treatment ?? "N/A"}
