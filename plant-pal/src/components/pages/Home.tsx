@@ -25,7 +25,7 @@ export default function Home() {
       </div>
       {prediction && (
         <PredictionCard
-          disease={prediction.disease_name}
+          disease={prediction.disease}
           severity={prediction.severity.toString()}
           treatment={prediction.treatment}
         />
